@@ -29,7 +29,7 @@ router.get('/user/getUser', async (req, res) => {
 });
 
 //Route to create Project after form submission
-router.post('/', async (req, res) => {
+router.post('/api/createProject', async (req, res) => {
     const propel_user_id = req.user.userId;
     if(!propel_user_id) {
         return res.status(400).json({ message: "missing propel user id"});
