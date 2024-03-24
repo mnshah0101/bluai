@@ -1,5 +1,5 @@
 import express from 'express';
-import { createProject, analyzeProject, returnSuggestions, getProjects } from '../controllers/projectController.js';
+import { createProject, analyzeProject, returnSuggestions, getProjects, getFootprint, getProjectKey } from '../controllers/projectController.js';
 
 const router = express.Router();
 
@@ -8,7 +8,11 @@ const router = express.Router();
 
 router.post('/', createProject);
 router.post('/:projectId/analyze', analyzeProject);
-router.get('/projects', getProjects);
+router.post('/projects', getProjects);
+
+router.get('/footprint/:projectId', getFootprint);
+
+router.get('/key/:projectId', getProjectKey);
 
 router.get('/suggestions/:projectId', returnSuggestions);
 

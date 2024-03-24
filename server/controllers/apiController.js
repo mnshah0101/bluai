@@ -96,6 +96,8 @@ export const makeGPTCall = async (req, res) => {
         return res.json(response.choices[0].message.content);
 
     } catch (error) {
+
         console.error('There has been a problem with your fetch operation. Make sure your openai key is correct.', error);
+        res.status(400).json({ error: error.message });
     }
 }

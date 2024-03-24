@@ -57,9 +57,16 @@ export const analyzeProject = async (req, res) => {
         }
 
         const githubLink = project.link;
+
+        const splitLink = githubLink.split("/");
+        let user_name = splitLink[3];
+        let repo_name = splitLink[4];
+        let path = githubLink.split("/main/")[1];
+
+
+
         
-        const repoName = githubLink.split("github.com/")[1]; 
-        const apiLink = 'https://api.github.com/repos/' + repoName + '/contents/server/spindle.js';
+        const apiLink = `https://api.github.com/repos/${user_name}/${repo_name}/contents/${path}`;
         console.log(apiLink)
         const response = fetch(apiLink)
             .then(response => {
@@ -146,6 +153,7 @@ export const returnSuggestions = async (req, res) => {
 
 export const getProjects = async (req, res) => {
     try {
+        console.log(req.body)
         const propel_user_id = req.body.user.userId;
         if (!propel_user_id) {
             return res.status(400).json({ message: "missing propel user id" });
@@ -155,6 +163,46 @@ export const getProjects = async (req, res) => {
         return res.status(200).json({ projects: projects, message: "The projects are successfully sent" })
 
     } catch (error) {
-        console.error('There has been a problem with your fetch operation:', error);
+        console.error('There has been a problem with your fetch operation for getting users:', error);
+    }
+}
+
+export const getFootprint = async (req, res) => {
+    try{
+        const { projectId} = req.params;
+        const project = await Project.findById(projectId);
+        if(!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+
+        //set x_ticks to be the keys in the projects.tokens object
+        let x_ticks = Object.keys(project.tokens);
+        let tokens = Object.values(project.tokens);
+        let carbon_footprint = Object.values(project.carbon_footprint);
+        let water_footprint = Object.values(project.water_footprint);
+
+
+        return res.status(200).json({tokens, carbon_footprint, water_footprint, x_ticks});
+
+    }
+    catch (error) {
+        console.error('There has been a problem with your fetch operation:', error)
+        return res.status(400).json({ error: error.message });
+    }
+}
+
+
+export const getProjectKey = async (req, res) => {
+    try {
+        const { projectId} = req.params;
+        const project = await Project.findById(projectId);
+        if(!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+        return res.status(200).json({key: project.key});
+    }
+    catch (error) {
+        console.error('There has been a problem with your fetch operation:', error)
+        return res.status(400).json({ error: error.message });
     }
 }

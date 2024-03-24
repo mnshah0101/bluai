@@ -8,10 +8,8 @@ import {useUser} from "@propelauth/nextjs/client";
 import { useRouter } from "next/navigation";
 
 function isValidGithubRepoUrl(url: string): boolean {
-  const pattern = new RegExp(
-    "^(https?://)?(www.)?github.com/[A-Za-z0-9_.-]+/?[A-Za-z0-9_.-]+/?$"
-  );
-  return pattern.test(url);
+     return url.includes('github.com');
+
 }
 
 const Form: React.FC = () => {

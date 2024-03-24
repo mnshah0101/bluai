@@ -940,6 +940,9 @@ body{
 .h-screen{
   height: 100vh;
 }
+.h-32{
+  height: 8rem;
+}
 .\!w-full{
   width: 100% !important;
 }
@@ -1029,6 +1032,9 @@ body{
 }
 .w-full{
   width: 100%;
+}
+.w-32{
+  width: 8rem;
 }
 .min-w-47\.5{
   min-width: 11.875rem;
@@ -1359,6 +1365,12 @@ body{
 .border-t{
   border-top-width: 1px;
 }
+.border-b-2{
+  border-bottom-width: 2px;
+}
+.border-t-2{
+  border-top-width: 2px;
+}
 .border-solid{
   border-style: solid;
 }
@@ -1569,6 +1581,9 @@ body{
 }
 .p-7\.5{
   padding: 1.875rem;
+}
+.p-5{
+  padding: 1.25rem;
 }
 .px-10{
   padding-left: 2.5rem;

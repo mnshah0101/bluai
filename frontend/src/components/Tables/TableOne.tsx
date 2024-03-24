@@ -11,10 +11,13 @@ const TableOne = (props: any) => {
   let [projectData, setProjectData] = React.useState<BRAND[]>([]);
   let [esg, setEsg] = React.useState<number>(0);
 
+  let [loading, setLoading] = React.useState<boolean>(false);
+
   let project = props.project;
 
 
   async function returnSuggestions(){
+    try{
     let response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/api/projects/suggestions/" + project, {
       method: "GET",
       headers: {
@@ -29,12 +32,15 @@ const TableOne = (props: any) => {
     let data = await response.json();
     setProjectData(data['suggestions']);
     setEsg(data['esg']);
+  }catch(err){
+    console.log(err);
+  }
 
   }
 
   useEffect(() => { 
     returnSuggestions();
-  });
+  }, []);
 
 
       
@@ -45,6 +51,8 @@ const TableOne = (props: any) => {
 
 
   async function getSuggestions(){
+    try{
+    setLoading(true);
     let response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/api/projects/" + project + "/analyze", {
       method: "POST",
       headers: {
@@ -77,6 +85,12 @@ const TableOne = (props: any) => {
 
     setProjectData(json);
 
+    setLoading(false);
+  }catch(err){
+    console.log(err);
+    setLoading(false);
+  }
+
  
 
    
@@ -90,6 +104,18 @@ const TableOne = (props: any) => {
 
 
 
+  if(loading){
+    return (
+      <div className="rounded-sm p-5 border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        <h4 className="mb-6 text-xl p-5 font-semibold text-black dark:text-white">
+          Loading...
+        </h4>
+        <div className="flex justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-stroke dark:border-strokedark"></div>
+        </div>
+      </div>
+    );
+  }
   
 
   if(projectData.length === 0){

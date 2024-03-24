@@ -67,18 +67,27 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     if(!loading && !user){
       window.location.href = "/login";
     }
+
+
     async function getProjects() {
 
+      if(!user){
+        return;
+      } 
+
       try{
+        console.log("this is the user")
+        console.log(user)
 
       const res = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/api/projects/projects",
         {
-          method: "GET",
+          method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            
-            body: JSON.stringify({user:user}),
+            "Content-Type": "application/json"
           },
+            
+            body: JSON.stringify({user}),
+          
         })
 
         console.log(res)
@@ -156,17 +165,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
             <ul className="mb-6 flex flex-col gap-1.5">
             
-              <li>
-                <Link
-                  href="/"
-                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes("calendar") &&
-                    "bg-graydark dark:bg-meta-4"
-                  }`}
-                >
-                  Spindle
-                </Link>
-              </li>
+              {projects.map((project, index) => (
+  <li key={index}>
+    <Link
+      href={`/project/${project._id}/`}
+      className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+        pathname.includes(project._id) &&
+        "bg-graydark dark:bg-meta-4"
+      }`}
+    >
+      {project.title}
+    </Link>
+  </li>
+))}
 
               <li>
                 <Link
