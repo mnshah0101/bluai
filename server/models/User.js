@@ -1,12 +1,15 @@
 //take coed with endpoitn and then handle in express iwth propelauth db
 //make user model
+import mongoose from "mongoose";
+
+const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
     propel_user_id: String,
     username: String,
     projects: [
         {
-            type :ObjectId,
+            type: Object,
             ref: 'Project'
         }
     ],

@@ -12,12 +12,12 @@ const ProjectSchema = new Schema({
         default: CryptoJS.lib.WordArray.random(16).toString()
     },
     link: String,
-    carbon_footprint: {
+    carbon_footprint: [{
         type: Object,
-    },
-    water_footprint: {
+    }],
+    water_footprint: [{
         type: Object,
-    },
+    }],
     tokens: Number,
     suggestions: [{type: Object}]
 });

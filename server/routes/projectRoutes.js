@@ -1,20 +1,22 @@
 import express from 'express';
-import projectController from '../controllers/projectController.js'; // Make sure to use the correct path
+import {createProject, analyzeProject, getUser, getProjects, makeGPTCall} from '../controllers/projectController.js'; // Make sure to use the correct path
 
 
 const router = express.Router();
 
 // Route for creating a new project
-router.post('/projects', projectController.createProject);
+router.post('/projects', createProject);
 
 // Route for analyzing an existing project
-router.post('/projects/:projectId/analyze', projectController.analyzeProject);
+router.post('/projects/:projectId/analyze', analyzeProject);
 
 //Route to check if user exists
-router.get('/user/getUser', projectController.getUser);
+router.get('/user/getUser', getUser);
 
-//Route to create Project after form submission
-router.post('/api/createProject', projectController.createProject);
+//Route to get all projects for a user
+router.post('/projects/getProjects', getProjects);
 
-router.post('/projects/getProjecst', projectController.getProjects);
+//Route to make openai call
+router.post('/projects/makeGPTCall', makeGPTCall);
+
 export default router;

@@ -1,6 +1,6 @@
 import Project from '../models/Project.js';
 import fetch from 'node-fetch';
-import { analyzeProjectData } from '../utils/openAI.js';
+import { GetSuggsetions } from '../utils/suggesstions.js';
 import UserModel from '../models/User.js';
 import ProjectModel from '../models/Project.js';
 
@@ -93,7 +93,7 @@ export const analyzeProject = async (req, res) => {
 
 
 
-        const openAIResponse = await analyzeProjectData(response);
+        const openAIResponse = await GetSuggsetions(response);
 
         // Ensure this matches what's passed to OpenAI
         res(openAIResponse);
@@ -198,6 +198,19 @@ export const getProjects = async (req, res) => {
 
 export const makeGPTCall = async (req, res) => {
     try {
+        const blu_key = req.body.blu_key;
+        if(!blu_key) {
+            return res.status(400).json({ message: "missing blu id" });
+        }
+        const prompt = req.body.prompt;
+        if(!prompt) {
+            return res.status(400).json({ message: "missing blu id" });
+        }
+        const open_ai_key = req.body.open_ai_key;
+        if(!open_ai_key) {
+            return res.status(400).json({ message: "missing blu id" });
+        }
+
         const project = await ProjectModel.find({ key: blu_key });
         if (!project) {
             return "Invalid Blu key";
