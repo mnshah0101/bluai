@@ -13,6 +13,7 @@ const ProjectSchema = new Schema({
         
         }
     },
+    link: String,
     image: {
         type: String,
         default: "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png"

@@ -2,11 +2,15 @@
 //make user model
 
 const UserSchema = new Schema({
-    githubBearer: String,
-    profile_picture: {
-        type: String,
-        default: "https://i.ibb.co/ctJJ5Q7/image.png"
-    },
+    propel_user_id: String,
+    username: String,
+    projects: [
+        {
+            type :ObjectId,
+            ref: 'Project'
+        }
+    ],
+    profile_picture: String
 });
 
 let UserModel = mongoose.models.User || mongoose.model('User', UserSchema); // Create a User model
