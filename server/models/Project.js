@@ -1,23 +1,25 @@
 //create a Project model in mongoose
 import mongoose from 'mongoose';
+import CryptoJS from 'crypto-js';
 
 const Schema = mongoose.Schema;
 
 const ProjectSchema = new Schema({
+    propel_user_id: String,
     title: String,
-    key: {
+    key : {
         type: String,
-        created_at: {
-            type: Date,
-            default: Date.now()
-        
-        }
+        default: CryptoJS.lib.WordArray.random(16).toString()
     },
     link: String,
-    image: {
-        type: String,
-        default: "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png"
+    carbon_footprint: {
+        type: Object,
     },
+    water_footprint: {
+        type: Object,
+    },
+    tokens: Number,
+    suggestions: [{type: String}]
 });
 
 let ProjectModel = mongoose.models.Project || mongoose.model('Project', ProjectSchema);
