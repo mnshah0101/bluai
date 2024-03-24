@@ -16,4 +16,5 @@ router.get('/user/getUser', projectController.getUser);
 //Route to create Project after form submission
 router.post('/api/createProject', projectController.createProject);
 
+router.post('/projects/getProjecst', projectController.getProjects);
 export default router;

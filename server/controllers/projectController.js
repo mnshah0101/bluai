@@ -162,7 +162,34 @@ export const createProject = async (req, res) => {
 
         let project = new ProjectModel(newProject);
         await project.save();
+
+        let user = await UserModel.find({ propel_user_id: propel_user_id });
+        if (!user) {
+            return res.status(500).json({ message: "user not found" });
+        }
+
+        user.projects.append(project);
         return res.status(200).json(project);
+
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+
+}
+
+export const getProjects = async (req, res) => {
+    try {
+        const propel_user_id = req.user.userId;
+        if (!propel_user_id) {
+            return res.status(400).json({ message: "missing propel user id" });
+        }
+
+        let user = await UserModel.find({ propel_user_id: propel_user_id }).populate('projects')
+        if (!user) {
+            return res.status(500).json({ message: "user not found" });
+        }
+
+        return res.status(200).json({projects: user.projects, message:"The projects are successfully sent"})
 
     } catch (error) {
         console.error('There has been a problem with your fetch operation:', error);
