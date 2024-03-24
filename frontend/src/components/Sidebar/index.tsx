@@ -64,7 +64,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   }, [sidebarExpanded]);
 
   useEffect(() => {
-    if(!loading && !user){
+    if(!loading && !user && window){
       window.location.href = "/api/auth/login";
     }
 
