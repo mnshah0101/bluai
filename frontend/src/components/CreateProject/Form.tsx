@@ -5,6 +5,7 @@ import ChatCard from "../Chat/ChatCard";
 import TableOne from "../Tables/TableOne";
 import CardDataStats from "../CardDataStats";
 import {useUser} from "@propelauth/nextjs/client";
+import { useRouter } from "next/navigation";
 
 function isValidGithubRepoUrl(url: string): boolean {
   const pattern = new RegExp(
@@ -15,6 +16,7 @@ function isValidGithubRepoUrl(url: string): boolean {
 
 const Form: React.FC = () => {
   const {loading, user} = useUser();
+  const router = useRouter();
 
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -70,16 +72,18 @@ const Form: React.FC = () => {
 
     let data = await response.json(); 
 
+    console.log(data);
 
-    if(response.status !== 201){
+
+    if(response.status !== 200){
       console.log('there was an error creating the project');
       setError(data.error);
       return;
     }
 
-    let project = data.project;
+    router.push("/project/" + data.project._id);
 
-    console.log("Project created successfully: ", project);
+    
 
  
 
