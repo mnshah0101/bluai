@@ -27,9 +27,7 @@ export const createProject = async (req, res) => {
             propel_user_id: propel_user_id,
             title: title,
             link: link,
-            carbon_footprint: [],
-            water_footprint: [],
-            tokens: 0,
+            
             suggestions: []
         };
 
@@ -47,8 +45,10 @@ export const createProject = async (req, res) => {
 
 
 export const analyzeProject = async (req, res) => {
+    console.log("analyzeProject")
     try {
         const { projectId} = req.params;
+        console.log(projectId)
         
         const project = await Project.findById(projectId);
         
@@ -80,27 +80,81 @@ export const analyzeProject = async (req, res) => {
         
         
 
-
-
-        
-
-
        const openAIResponse = await getSuggestions(response);
-        
-        // Ensure this matches what's passed to OpenAI
-       res.json(openAIResponse);
-       
-        /*
-        // Perform analysis
-        const analysisResults = await analyzeProjectData(project.projectData); // Ensure this matches what's passed to OpenAI
-        project.analysisResults = analysisResults;
-        await project.save();
 
-        res.json({ project, analysisResults });
-        */
+
+        const data_json = JSON.parse(openAIResponse);
+
+        const rating = data_json['Rating'];
+        const suggestions = data_json['Suggestions'];
+
+        project.esg_score = rating;
+
+
+         let tokens = data_json['tokens'];
+         let carbon = tokens.map((token) => Math.round(100*token * 0.02406)/100);
+        let water = tokens.map((token) => Math.round(token * 0.4226*100)/100);
+
+    let json = suggestions.map((suggestion, index) => {
+      return {
+        suggestion: suggestion,
+        tokens_saved: tokens[index],
+        carbon_saved: carbon[index],
+        water_saved: water[index],
+      };
+    });
+
+    project.suggestions = json;
+
+    await project.save();
+
+
+
+
+        
+       return res.json(openAIResponse);
+
+
+       
+    
 
         
     } catch (error) {
+        console.log(error);
         res.status(400).json({ error: error.message });
     }
 };
+
+
+
+export const returnSuggestions = async (req, res) => {
+    try {
+
+        const { projectId} = req.params;
+        
+        const project = await Project.findById(projectId);
+        if(!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+        return res.status(200).json({suggestions: project.suggestions, esg: project.esg_score});
+        
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+}
+
+
+export const getProjects = async (req, res) => {
+    try {
+        const propel_user_id = req.body.user.userId;
+        if (!propel_user_id) {
+            return res.status(400).json({ message: "missing propel user id" });
+        }
+        const projects = await Project.find({propel_user_id: propel_user_id});
+
+        return res.status(200).json({ projects: projects, message: "The projects are successfully sent" })
+
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+}

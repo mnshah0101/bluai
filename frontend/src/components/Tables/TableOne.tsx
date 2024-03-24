@@ -1,29 +1,110 @@
 import { BRAND } from "@/types/brand";
 import Image from "next/image";
+import React from "react";
+import { useEffect } from "react";
+import ChartThree from "../Charts/ChartThree";
 
-let brandData: BRAND[] = [
-  {
-    suggestion: "/dfadf",
-    tokens_saved: 4,
-    carbon_saved: 3.5,
-    water_saved: 4
+
+
+const TableOne = (props: any) => {
+
+  let [projectData, setProjectData] = React.useState<BRAND[]>([]);
+  let [esg, setEsg] = React.useState<number>(0);
+
+  let project = props.project;
+
+
+  async function returnSuggestions(){
+    let response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/api/projects/suggestions/" + project, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }
+
+    })
+    if(response.status!==200){
+      console.log("error");
+      return;
+    }
+    let data = await response.json();
+    setProjectData(data['suggestions']);
+    setEsg(data['esg']);
+
   }
-];
 
-brandData= []
+  useEffect(() => { 
+    returnSuggestions();
+  });
 
-const TableOne = () => {
 
-  if(brandData.length === 0){
+      
+  
+
+
+
+
+
+  async function getSuggestions(){
+    let response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/api/projects/" + project + "/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    let data = await response.json();
+
+    
+   data = JSON.parse(data);
+
+
+
+    let suggestions = data.Suggestions;
+    let tokens = data.tokens;
+    let carbon = tokens.map((token: any) => Math.round(100*token * 0.02406)/100);
+    let water = tokens.map((token: any) => Math.round(token * 0.4226*100)/100);
+
+    setEsg(data.Rating);
+
+    let json = suggestions.map((suggestion: any, index: number) => {
+      return {
+        suggestion: suggestion,
+        tokens_saved: tokens[index],
+        carbon_saved: carbon[index],
+        water_saved: water[index],
+      };
+    });
+
+    setProjectData(json);
+
+ 
+
+   
+  }
+
+  
+
+
+ 
+
+
+
+
+  
+
+  if(projectData.length === 0){
     return (
 
  <div className="rounded-sm border border-stroke bg-white  px-5 shadow-default dark:border-strokedark dark:bg-boxdark py-6">
           
-    <button className="flex mx-auto bg-slate-700 text-white font-bold py-4 px-4 rounded hover:bg-slate-900">
+    <button onClick={getSuggestions} className="flex mx-auto bg-slate-700 text-white font-bold py-4 px-4 rounded hover:bg-slate-900">
         <h3 className="font-medium uppercase xsm:text-base">
             Get Suggestions
         </h3>
     </button>
+
+
+
             
 </div>
     )
@@ -64,17 +145,18 @@ const TableOne = () => {
          
         </div>
 
-        {brandData.map((brand, key) => (
+        {projectData.map((brand, key) => (
           <div
             className={`grid grid-cols-3 sm:grid-cols-5 ${
-              key === brandData.length - 1
+              key === projectData.length - 1
                 ? ""
                 : "border-b border-stroke dark:border-strokedark"
             }`}
             key={key}
           >
-            <div className="flex items-center gap-4 p-2.5 xl:p-5">
-              <div className="flex-shrink-0">
+            <div className="flex items-center gap-4 p-2.5 xl:p-5 text-wrap">
+              <div className="text-wrap">
+                
                 {brand.suggestion}
                
               </div>
@@ -99,6 +181,9 @@ const TableOne = () => {
           </div>
         ))}
       </div>
+
+                 <ChartThree esg={esg}/>
+
     </div>
   );
 };

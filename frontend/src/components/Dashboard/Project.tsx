@@ -1,19 +1,22 @@
 "use client";
 import React from "react";
 import ChartOne from "../Charts/ChartOne";
+import ChartThree from "../Charts/ChartThree";
 import TableOne from "../Tables/TableOne";
 import {useUser} from "@propelauth/nextjs/client";
 
+type ProjectProps = {
+  project: string;
+};
 
-
-const Project: React.FC = () => {
+const Project = ({ project }: ProjectProps): JSX.Element => {
   const {loading, user} = useUser();
 
 
 
 
 
-  console.log(user);
+
 
 
 
@@ -28,7 +31,8 @@ const Project: React.FC = () => {
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
         <ChartOne />
         <div className="col-span-12 xl:col-span-12 ">
-          <TableOne />
+          <TableOne  project = {project}/>
+
         </div>
       </div>
     </>

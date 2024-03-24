@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import SidebarLinkGroup from "./SidebarLinkGroup";
+import { useUser } from "@propelauth/nextjs/client";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -16,6 +17,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
+
+  const {loading, user} = useUser();
+
+  const [projects, setProjects] = useState([] as any[]);
 
   let storedSidebarExpanded = "true";
 
@@ -57,6 +62,45 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       document.querySelector("body")?.classList.remove("sidebar-expanded");
     }
   }, [sidebarExpanded]);
+
+  useEffect(() => {
+    if(!loading && !user){
+      window.location.href = "/login";
+    }
+    async function getProjects() {
+
+      try{
+
+      const res = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/api/projects/projects",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            
+            body: JSON.stringify({user:user}),
+          },
+        })
+
+        console.log(res)
+      const data = await res.json()
+      console.log(data)
+      setProjects(data.projects);
+      }
+      catch(err){
+        console.log(err)
+      }
+    }
+
+    if (user) {
+      getProjects();
+    }
+
+  }
+
+  , [loading, user]);
+
+
+
 
   return (
     <aside

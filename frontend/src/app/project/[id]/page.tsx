@@ -1,24 +1,43 @@
+'use client'
 import Project from "@/components/Dashboard/Project";
-import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { useRouter } from 'next/navigation'
+import { usePathname } from "next/navigation";
+
+
+
+function getLastPartOfPath(path: string): string {
+  const parts = path.split('/');
+  return parts[parts.length - 1];
+}
 
 
 
 
 
-export const metadata: Metadata = {
-  title:
-    "Blu AI - Envionmentaly Friendly AI Code",
-  description: "Blu AI audits your code for environmental impact and provides suggestions for improvement.",
-};
 
 
 export default function Home() {
+
+ const pathName = usePathname();
+ let id = '';
+
+ if(pathName != null){
+ id = getLastPartOfPath(pathName)
+ }
+
+ 
+
+ 
+
+ 
+
+
+
+
   return (
     <>
       <DefaultLayout>
-        <Project />
+        <Project project={id} />
       </DefaultLayout>
     </>
   );
