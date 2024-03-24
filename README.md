@@ -19,13 +19,6 @@
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -33,7 +26,7 @@
   <h3 align="center"></h3>
 
   <p align="center">
-    Blu - Make Your AI Code Sustainable with Blue=
+    Blu - Make Your AI Code Sustainable with Blu
    
   </p>
 </div>
@@ -67,8 +60,6 @@
 <!-- ABOUT THE PROJECT -->
 
 ## About The Project
-
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
 
 Blu is a revolutionary web application designed to make AI models water and carbon neutral, contributing towards an eco-friendly digital world. Positioned as a middleware, Blu monitors and tracks the carbon footprint of the AI models, as well as the water usage associated with their operation. By integrating your GitHub code into Blu, users can easily access insightful recommendations and suggestions on how to make their code more sustainable and environmentally friendly. Blu aims at building a digital ecosystem where technology operates in harmony with nature.
 
