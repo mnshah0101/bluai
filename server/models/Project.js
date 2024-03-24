@@ -19,7 +19,7 @@ const ProjectSchema = new Schema({
         type: Object,
     },
     tokens: Number,
-    suggestions: [{type: String}]
+    suggestions: [{type: Object}]
 });
 
 let ProjectModel = mongoose.models.Project || mongoose.model('Project', ProjectSchema);
