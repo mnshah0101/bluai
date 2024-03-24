@@ -1,7 +1,8 @@
 {
+  "/not-found": "app/not-found.js",
   "/api/auth/[slug]/route": "app/api/auth/[slug]/route.js",
-  "/project/[id]/page": "app/project/[id]/page.js",
   "/page": "app/page.js",
+  "/project/[id]/page": "app/project/[id]/page.js",
   "/createProject/page": "app/createProject/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js"
 }

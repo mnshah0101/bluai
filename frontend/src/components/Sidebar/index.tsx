@@ -65,7 +65,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
   useEffect(() => {
     if(!loading && !user){
-      window.location.href = "/login";
+      window.location.href = "/api/auth/login";
     }
 
 
