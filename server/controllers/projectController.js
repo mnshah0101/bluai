@@ -189,8 +189,53 @@ export const getProjects = async (req, res) => {
             return res.status(500).json({ message: "user not found" });
         }
 
-        return res.status(200).json({projects: user.projects, message:"The projects are successfully sent"})
+        return res.status(200).json({ projects: user.projects, message: "The projects are successfully sent" })
 
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+}
+
+export const makeGPTCall = async (req, res) => {
+    try {
+        const project = await ProjectModel.find({ key: blu_key });
+        if (!project) {
+            return "Invalid Blu key";
+        };
+
+        const model = "gpt-4-turbo";
+        const encoding = Tiktoken.encoding_for_model(model);
+        const num_tokens = encoding.encode(prompt).length;
+
+        project.tokens = num_tokens;
+        project.water_footprint = num_tokens * .4226;
+        project.carbon_footprint = num_tokens * .02406;
+        await project.save();
+
+        const openai = new OpenAI({
+            apiKey: open_ai_key,
+        });
+
+        const response = await openai.chat.completions.create({
+            model: model,
+            messages: [
+                {
+                    role: "system",
+                    content: `${prompt}`
+                },
+                {
+                    role: "user",
+                    content: params.prompt,
+                },
+            ],
+            temperature: 0,
+            max_tokens: 1024,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+        });
+
+        return response.json();
     } catch (error) {
         console.error('There has been a problem with your fetch operation:', error);
     }
