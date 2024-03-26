@@ -1,8 +1,6 @@
 {
   "/page": "app/page.js",
-  "/auth/signin/page": "app/auth/signin/page.js",
-  "/createProject/page": "app/createProject/page.js",
-  "/calendar/page": "app/calendar/page.js",
   "/api/auth/[slug]/route": "app/api/auth/[slug]/route.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js"
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/createProject/page": "app/createProject/page.js"
 }

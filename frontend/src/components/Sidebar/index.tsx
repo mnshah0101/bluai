@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import SidebarLinkGroup from "./SidebarLinkGroup";
+import { useUser } from "@propelauth/nextjs/client";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -16,6 +17,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
+
+  const {loading, user} = useUser();
+
+  const [projects, setProjects] = useState([] as any[]);
 
   let storedSidebarExpanded = "true";
 
@@ -57,6 +62,54 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       document.querySelector("body")?.classList.remove("sidebar-expanded");
     }
   }, [sidebarExpanded]);
+
+  useEffect(() => {
+    if(!loading && !user && window){
+      window.location.href = "/api/auth/login";
+    }
+
+
+    async function getProjects() {
+
+      if(!user){
+        return;
+      } 
+
+      try{
+        console.log("this is the user")
+        console.log(user)
+
+      const res = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/api/projects/projects",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+            
+            body: JSON.stringify({user}),
+          
+        })
+
+        console.log(res)
+      const data = await res.json()
+      console.log(data)
+      setProjects(data.projects);
+      }
+      catch(err){
+        console.log(err)
+      }
+    }
+
+    if (user) {
+      getProjects();
+    }
+
+  }
+
+  , [loading, user]);
+
+
+
 
   return (
     <aside
@@ -112,17 +165,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
             <ul className="mb-6 flex flex-col gap-1.5">
             
-              <li>
-                <Link
-                  href="/"
-                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes("calendar") &&
-                    "bg-graydark dark:bg-meta-4"
-                  }`}
-                >
-                  Spindle
-                </Link>
-              </li>
+              {projects.map((project, index) => (
+  <li key={index}>
+    <Link
+      href={`/project/${project._id}/`}
+      className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+        pathname.includes(project._id) &&
+        "bg-graydark dark:bg-meta-4"
+      }`}
+    >
+      {project.title}
+    </Link>
+  </li>
+))}
 
               <li>
                 <Link

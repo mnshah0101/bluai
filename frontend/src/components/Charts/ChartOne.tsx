@@ -1,8 +1,71 @@
 import { ApexOptions } from "apexcharts";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
-const options: ApexOptions = {
+type ProjectProps = {
+  project: string;
+};
+
+interface ChartOneState {
+  series: {
+    name: string;
+    data: number[];
+  }[];
+}
+
+const ChartOne = ({ project }: ProjectProps): JSX.Element => {
+
+  const [x_ticks, setX_ticks] = useState<string[]>([]);
+  const [water_footprint, setWater_footprint] = useState<number[]>([]);
+  const [carbon_footprint, setCarbon_footprint] = useState<number[]>([]);
+  const [tokens, setTokens] = useState<number[]>([]);
+
+
+  async function get_data() {
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_SERVER_URL + `/api/projects/footprint/${project}`
+    );
+    const data = await response.json();
+    console.log("footprint data")
+    console.log(data);
+    setX_ticks(data.x_ticks);
+    setWater_footprint(data.water_footprint);
+    setCarbon_footprint(data.carbon_footprint);
+    setTokens(data.tokens);
+
+    setState((prevState) => ({
+      ...prevState,
+      series: [
+        {
+          name: "Water Usage (mL)",
+          data: data.water_footprint,
+        },
+
+        {
+          name: "Carbon Emissions (gallons)",
+          data: data.carbon_footprint,
+        },
+         {
+          name: "Token Usage (tokens)",
+          data: data.tokens,
+        }
+      ],
+    }));
+
+
+  }
+  useEffect(() => {
+    get_data();
+  }, []);
+
+
+
+
+
+
+
+
+  const options: ApexOptions = {
   legend: {
     show: false,
     position: "top",
@@ -83,20 +146,7 @@ const options: ApexOptions = {
   },
   xaxis: {
     type: "category",
-    categories: [
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-    ],
+    categories: x_ticks,
     axisBorder: {
       show: false,
     },
@@ -114,15 +164,6 @@ const options: ApexOptions = {
     max: 100,
   },
 };
-
-interface ChartOneState {
-  series: {
-    name: string;
-    data: number[];
-  }[];
-}
-
-const ChartOne: React.FC = () => {
   const [state, setState] = useState<ChartOneState>({
     series: [
       {
@@ -135,8 +176,8 @@ const ChartOne: React.FC = () => {
         data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 51],
       },
        {
-        name: "Energy Usage",
-        data: [20, 22, 33, 30, 45, 34, 64, 42, 53, 50, 39, 100],
+        name: "Token Usage",
+        data: [20, 22, 33, 30, 45, 34, 64, 42, 53, 50, 39, 50],
       }
     ],
   });
@@ -178,7 +219,7 @@ const ChartOne: React.FC = () => {
               <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-danger"></span>
             </span>
             <div className="w-full">
-              <p className="font-semibold text-danger">Total Energy Usage</p>
+              <p className="font-semibold text-danger">Total Token Usage</p>
             </div>
           </div>
         </div>

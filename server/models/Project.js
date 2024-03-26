@@ -2,6 +2,17 @@
 import mongoose from 'mongoose';
 import CryptoJS from 'crypto-js';
 
+let dateArray = {}
+
+for (let i = 0; i < 30; i++) {
+  let d = new Date();
+  d.setDate(d.getDate() - i);
+  let dateKey = `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${('0' + d.getDate()).slice(-2)}`; 
+  dateArray[dateKey] = 0;
+}
+
+
+
 const Schema = mongoose.Schema;
 
 const ProjectSchema = new Schema({
@@ -12,14 +23,22 @@ const ProjectSchema = new Schema({
         default: CryptoJS.lib.WordArray.random(16).toString()
     },
     link: String,
-    carbon_footprint: [{
+    carbon_footprint: {
         type: Object,
-    }],
-    water_footprint: [{
+        default: dateArray
+    },
+    water_footprint:{
         type: Object,
-    }],
-    tokens: Number,
-    suggestions: [{type: Object}]
+        default: dateArray
+    },
+    tokens:{
+        type: Object,
+        default: dateArray
+
+    },
+    suggestions: [{type: Object}],
+    esg_score: Number,
+    
 });
 
 let ProjectModel = mongoose.models.Project || mongoose.model('Project', ProjectSchema);
