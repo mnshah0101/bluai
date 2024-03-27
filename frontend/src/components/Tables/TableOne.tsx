@@ -58,12 +58,13 @@ const TableOne = (props: any) => {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ project_id: project })
     });
 
     let data = await response.json();
 
-    
-   data = JSON.parse(data);
+   console.log(`This is data ${data.suggestions}`); 
+   data = JSON.parse(data.suggestions);
 
 
 

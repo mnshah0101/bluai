@@ -47,11 +47,10 @@ export const createProject = async (req, res) => {
 export const analyzeProject = async (req, res) => {
     console.log("analyzeProject")
     try {
-        const { projectId} = req.params;
-        console.log(projectId)
+        const { project_id } = req.body;
+        console.log(project_id)
         
-        const project = await Project.findById(projectId);
-        
+        const project = await Project.findById(project_id);
         if (!project) {
             return res.status(404).json({ error: 'Project not found' });
         }
@@ -66,11 +65,12 @@ export const analyzeProject = async (req, res) => {
 
 
         
-        const apiLink = `https://api.github.com/repos/${user_name}/${repo_name}/contents/${path}`;
-        console.log(apiLink)
-        const response = fetch(apiLink)
+        // const apiLink = `https://api.github.com/repos/${user_name}/${repo_name}/contents/${path}`;
+        const apiLink = 'https://api.github.com/repos/TengHu/ActionWeaver/contents/actionweaver/actions/action.py';
+        const response = await fetch(apiLink)
             .then(response => {
                 if (!response.ok) { 
+                    console.log(response);
                     throw new Error('Network response was not ok');
                 }
                 return response.json(); // Convert the response to JSON
@@ -86,10 +86,10 @@ export const analyzeProject = async (req, res) => {
             });
         
         
-
        const openAIResponse = await getSuggestions(response);
+       console.log(`Openai response: ${openAIResponse}`);
 
-
+        
         const data_json = JSON.parse(openAIResponse);
 
         const rating = data_json['Rating'];
@@ -119,7 +119,7 @@ export const analyzeProject = async (req, res) => {
 
 
         
-       return res.json(openAIResponse);
+       return res.json({suggestions: openAIResponse});
 
 
        
@@ -137,9 +137,9 @@ export const analyzeProject = async (req, res) => {
 export const returnSuggestions = async (req, res) => {
     try {
 
-        const { projectId} = req.params;
+        const { project_id} = req.params;
         
-        const project = await Project.findById(projectId);
+        const project = await Project.findById(project_id);
         if(!project) {
             return res.status(404).json({ error: 'Project not found' });
         }
@@ -169,8 +169,8 @@ export const getProjects = async (req, res) => {
 
 export const getFootprint = async (req, res) => {
     try{
-        const { projectId} = req.params;
-        const project = await Project.findById(projectId);
+        const { project_id} = req.params;
+        const project = await Project.findById(project_id);
         if(!project) {
             return res.status(404).json({ error: 'Project not found' });
         }
@@ -194,8 +194,8 @@ export const getFootprint = async (req, res) => {
 
 export const getProjectKey = async (req, res) => {
     try {
-        const { projectId} = req.params;
-        const project = await Project.findById(projectId);
+        const { project_id} = req.params;
+        const project = await Project.findById(project_id);
         if(!project) {
             return res.status(404).json({ error: 'Project not found' });
         }
@@ -203,6 +203,23 @@ export const getProjectKey = async (req, res) => {
     }
     catch (error) {
         console.error('There has been a problem with your fetch operation:', error)
+        return res.status(400).json({ error: error.message });
+    }
+}
+
+export const deleteProject = async (req, res) => {
+    try {
+        const project_id = req.body.project_id;
+        if(!project_id) {
+            return res.status(404).json({ error: 'Project id missing' });
+        }
+        const project = await Project.findByIdAndDelete(project_id);
+        if(!project) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+        return res.status(200).json({ message: "Project deleted successfully" });
+    } catch (error) {
+        console.error('There has been a problem deleting the project:', error)
         return res.status(400).json({ error: error.message });
     }
 }
