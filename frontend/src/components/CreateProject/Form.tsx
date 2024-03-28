@@ -1,8 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import ChartTwo from "../Charts/ChartTwo";
-import ChatCard from "../Chat/ChatCard";
-import TableOne from "../Tables/TableOne";
 import CardDataStats from "../CardDataStats";
 import {useUser} from "@propelauth/nextjs/client";
 import { useRouter } from "next/navigation";

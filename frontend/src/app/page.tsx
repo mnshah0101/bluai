@@ -1,13 +1,14 @@
-import HomeComponent from "@/components/Home/HomeComponent";
 import { Metadata } from "next";
-import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import dynamic from 'next/dynamic'
+const HomeComponent = dynamic(() => import('@/components/Home/HomeComponent'), { ssr: false })
+const DefaultLayout = dynamic(() => import('@/components/Layouts/DefaultLayout'), { ssr: false })
 
 
 
 
 export const metadata: Metadata = {
   title:
-    "Blu AI - Envionmentaly Friendly AI Code",
+    "Blu AI - Environmentally Friendly AI Code",
   description: "Blu AI audits your code for environmental impact and provides suggestions for improvement.",
 };
 
