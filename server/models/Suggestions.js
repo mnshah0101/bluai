@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 const SuggestionSchema = new Schema({
     propel_user_id: String,
+    project_title: String,
     link: String,
     suggestions: [{type: Object}],
     esg_score: Number,

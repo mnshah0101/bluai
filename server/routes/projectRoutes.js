@@ -1,23 +1,19 @@
 import express from 'express';
-import { createProject, analyzeProject, returnSuggestions, getProjects, getFootprint, getProjectKey, deleteProject, deleteSuggestions, getUserSuggestions } from '../controllers/projectController.js';
+import { createProject, analyzeProject, getProjectStats, getUserProjects, getFootprint, getProjectKey, deleteProject, deleteSuggestions, getUserSuggestions, getProjectSuggestions } from '../controllers/projectController.js';
 
 const router = express.Router();
 
 router.post('/', createProject);
-
 router.post('/:projectId/analyze', analyzeProject);
-
-router.get('/projects', getProjects);
-router.get('/getSuggestions', getUserSuggestions);
-
 router.post('/deleteProject', deleteProject)
 router.post('/deleteSuggestions', deleteSuggestions);
 
-router.get('/footprint/:projectId', getFootprint);
-
-router.get('/key/:projectId', getProjectKey);
-
-router.get('/suggestions/:projectId', returnSuggestions);
+router.get('/projects', getUserProjects);
+router.get('/:projectId/projectSuggestions', getProjectSuggestions);
+router.get('/userSuggestions', getUserSuggestions);
+router.get(':projectId/footprint', getFootprint);
+router.get(':projectId//key', getProjectKey);
+router.get('/:projectId/projectStats', getProjectStats);
 
 
 router.get('/', (req, res) => {
