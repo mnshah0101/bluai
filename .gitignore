@@ -6,6 +6,11 @@
 /frontend/.env.local
 /frontend/.next/
 
+/frontend2.0/node_modules/
+/frontend2.0/.env
+/frontend2.0/.env.local
+/frontend2.0/.next/
+
 
 
 /server/node_modules/

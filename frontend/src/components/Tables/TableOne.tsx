@@ -1,145 +1,125 @@
-'use client';
+"use client";
 import { BRAND } from "@/types/brand";
 import Image from "next/image";
 import React from "react";
 import { useEffect } from "react";
 import ChartThree from "../Charts/ChartThree";
 
-
-
 const TableOne = (props: any) => {
-
   let [projectData, setProjectData] = React.useState<BRAND[]>([]);
   let [esg, setEsg] = React.useState<number>(0);
 
   let [loading, setLoading] = React.useState<boolean>(false);
 
+  let [error, setError] = React.useState<string>("");
+
   let project = props.project;
 
-
-  async function returnSuggestions(){
-    try{
-    let response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/api/projects/suggestions/" + project, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+  async function returnSuggestions() {
+    try {
+      let response = await fetch(
+        process.env.NEXT_PUBLIC_SERVER_URL +
+          "/api/projects/suggestions/" +
+          project,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      if (response.status !== 200) {
+        console.log("error");
+        return;
       }
-
-    })
-    if(response.status!==200){
-      console.log("error");
-      return;
+      let data = await response.json();
+      setProjectData(data["suggestions"]);
+      setEsg(data["esg"]);
+    } catch (err) {
+      console.log(err);
     }
-    let data = await response.json();
-    setProjectData(data['suggestions']);
-    setEsg(data['esg']);
-  }catch(err){
-    console.log(err);
   }
 
-  }
-
-  useEffect(() => { 
+  useEffect(() => {
     returnSuggestions();
   }, []);
 
+  async function getSuggestions() {
+    try {
+      setLoading(true);
+      let response = await fetch(
+        process.env.NEXT_PUBLIC_SERVER_URL +
+          "/api/projects/" +
+          project +
+          "/analyze",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-      
-  
+      let data = await response.json();
 
+      data = JSON.parse(data);
 
+      let suggestions = data.Suggestions;
+      let tokens = data.tokens;
+      let carbon = tokens.map(
+        (token: any) => Math.round(100 * token * 0.02406) / 100,
+      );
+      let water = tokens.map(
+        (token: any) => Math.round(token * 0.4226 * 100) / 100,
+      );
 
+      setEsg(data.Rating);
 
+      let json = suggestions.map((suggestion: any, index: number) => {
+        return {
+          suggestion: suggestion,
+          tokens_saved: tokens[index],
+          carbon_saved: carbon[index],
+          water_saved: water[index],
+        };
+      });
 
-  async function getSuggestions(){
-    try{
-    setLoading(true);
-    let response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/api/projects/" + project + "/analyze", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+      setProjectData(json);
 
-    let data = await response.json();
-
-    
-   data = JSON.parse(data);
-
-
-
-    let suggestions = data.Suggestions;
-    let tokens = data.tokens;
-    let carbon = tokens.map((token: any) => Math.round(100*token * 0.02406)/100);
-    let water = tokens.map((token: any) => Math.round(token * 0.4226*100)/100);
-
-    setEsg(data.Rating);
-
-    let json = suggestions.map((suggestion: any, index: number) => {
-      return {
-        suggestion: suggestion,
-        tokens_saved: tokens[index],
-        carbon_saved: carbon[index],
-        water_saved: water[index],
-      };
-    });
-
-    setProjectData(json);
-
-    setLoading(false);
-  }catch(err){
-    console.log(err);
-    setLoading(false);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
   }
 
- 
-
-   
-  }
-
-  
-
-
- 
-
-
-
-
-  if(loading){
+  if (loading) {
     return (
-      <div className="rounded-sm p-5 border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-        <h4 className="mb-6 text-xl p-5 font-semibold text-black dark:text-white">
+      <div className="rounded-sm border border-stroke bg-white p-5 px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        <h4 className="mb-6 p-5 text-xl font-semibold text-black dark:text-white">
           Loading...
         </h4>
         <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-stroke dark:border-strokedark"></div>
+          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-stroke dark:border-strokedark"></div>
         </div>
       </div>
     );
   }
-  
 
-  if(projectData.length === 0){
+  if (projectData.length === 0) {
     return (
-
- <div className="rounded-sm border border-stroke bg-white  px-5 shadow-default dark:border-strokedark dark:bg-boxdark py-6">
-          
-    <button onClick={getSuggestions} className="flex mx-auto bg-slate-700 text-white font-bold py-4 px-4 rounded hover:bg-slate-900">
-        <h3 className="font-medium uppercase xsm:text-base">
+      <div className="rounded-sm border border-stroke bg-white  px-5 py-6 shadow-default dark:border-strokedark dark:bg-boxdark">
+        <button
+          onClick={getSuggestions}
+          className="mx-auto flex rounded bg-slate-700 px-4 py-4 font-bold text-white hover:bg-slate-900"
+        >
+          <h3 className="font-medium uppercase xsm:text-base">
             Get Suggestions
-        </h3>
-    </button>
-
-
-
-            
-</div>
-    )
+          </h3>
+        </button>
+      </div>
+    );
   }
-
-
-
-
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -169,7 +149,6 @@ const TableOne = (props: any) => {
               Water Saved
             </h5>
           </div>
-         
         </div>
 
         {projectData.map((brand, key) => (
@@ -181,36 +160,32 @@ const TableOne = (props: any) => {
             }`}
             key={key}
           >
-            <div className="flex items-center gap-4 p-2.5 xl:p-5 text-wrap">
-              <div className="text-wrap">
-                
-                {brand.suggestion}
-               
-              </div>
-            
-            </div>
-            
-
-            <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{brand.tokens_saved.toString()}</p>
+            <div className="flex items-center gap-4 text-wrap p-2.5 xl:p-5">
+              <div className="text-wrap">{brand.suggestion}</div>
             </div>
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{brand.carbon_saved.toString()}</p>
+              <p className="text-black dark:text-white">
+                {brand.tokens_saved.toString()}
+              </p>
             </div>
 
             <div className="flex items-center justify-center p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{brand.water_saved.toString()}</p>
+              <p className="text-black dark:text-white">
+                {brand.carbon_saved.toString()}
+              </p>
             </div>
 
-          
-
+            <div className="flex items-center justify-center p-2.5 xl:p-5">
+              <p className="text-black dark:text-white">
+                {brand.water_saved.toString()}
+              </p>
+            </div>
           </div>
         ))}
       </div>
 
-                 <ChartThree esg={esg}/>
-
+      <ChartThree esg={esg} />
     </div>
   );
 };

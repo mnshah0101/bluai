@@ -36,7 +36,11 @@ const ProjectSchema = new Schema({
         default: dateArray
 
     },
-    suggestions: [{type: Object}],
+    suggestionFiles: {
+        type: Map,
+        of: Number,
+        default: {}
+    },
     esg_score: Number,
     
 });
